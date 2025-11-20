@@ -36,6 +36,8 @@ import { getSpanishPaginatorIntl } from './shared/spanish-paginator-intl';
 import { MatSidenavModule } from '@angular/material/sidenav';
 //Ngx-cookie-service
 import { CookieService } from 'ngx-cookie-service';
+// Modulo para las gráficas
+import { NgChartsModule } from 'ng2-charts';
 
 // Third Party Modules
 import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
@@ -46,6 +48,7 @@ import { AdminScreenComponent } from './screens/admin-screen/admin-screen.compon
 import { NavbarUserComponent } from './partials/navbar-user/navbar-user.component';
 import { SidebarComponent } from './partials/sidebar/sidebar.component';
 import { EliminarUserModalComponent } from './modals/eliminar-user-modal/eliminar-user-modal.component';
+import { GraficasScreenComponent } from './screens/graficas-screen/graficas-screen.component';
 
 @NgModule({
   declarations: [
@@ -63,7 +66,8 @@ import { EliminarUserModalComponent } from './modals/eliminar-user-modal/elimina
     AdminScreenComponent,
     NavbarUserComponent,
     SidebarComponent,
-    EliminarUserModalComponent
+    EliminarUserModalComponent,
+    GraficasScreenComponent
   ],
   imports: [
     BrowserModule,
@@ -85,7 +89,8 @@ import { EliminarUserModalComponent } from './modals/eliminar-user-modal/elimina
     MatTableModule,
     MatPaginatorModule,
     MatSidenavModule,
-    MatDialogModule
+    MatDialogModule,
+    NgChartsModule
   ],
   providers: [
     CookieService,
