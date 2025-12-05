@@ -106,12 +106,81 @@ export class GraficasScreenComponent implements OnInit{
       (response)=>{
         this.total_user = response;
         console.log("Total usuarios: ", this.total_user);
+
+        // Actualizar las gráficas con datos dinámicos
+        this.actualizarGraficas();
       }, (error)=>{
         console.log("Error al obtener total de usuarios ", error);
-
         alert("No se pudo obtener el total de cada rol de usuarios");
       }
     );
+  }
+
+  // Actualizar gráficas con datos dinámicos
+  private actualizarGraficas() {
+    const totalAdmins = this.total_user.administradores || 0;
+    const totalMaestros = this.total_user.maestros || 0;
+    const totalAlumnos = this.total_user.alumnos || 0;
+
+    // Actualizar gráfica circular
+    this.pieChartData = {
+      labels: ["Administradores", "Maestros", "Alumnos"],
+      datasets: [
+        {
+          data: [totalAdmins, totalMaestros, totalAlumnos],
+          label: 'Registro de usuarios',
+          backgroundColor: [
+            '#FCFF44',
+            '#F1C8F2',
+            '#31E731'
+          ]
+        }
+      ]
+    };
+
+    // Actualizar gráfica de dona
+    this.doughnutChartData = {
+      labels: ["Administradores", "Maestros", "Alumnos"],
+      datasets: [
+        {
+          data: [totalAdmins, totalMaestros, totalAlumnos],
+          label: 'Registro de usuarios',
+          backgroundColor: [
+            '#F88406',
+            '#FCFF44',
+            '#31E7E7'
+          ]
+        }
+      ]
+    };
+
+    // Actualizar histograma con totales
+    this.lineChartData = {
+      labels: ["Administradores", "Maestros", "Alumnos"],
+      datasets: [
+        {
+          data: [totalAdmins, totalMaestros, totalAlumnos],
+          label: 'Total de usuarios por rol',
+          backgroundColor: '#F88406'
+        }
+      ]
+    };
+
+    // Actualizar gráfica de barras
+    this.barChartData = {
+      labels: ["Administradores", "Maestros", "Alumnos"],
+      datasets: [
+        {
+          data: [totalAdmins, totalMaestros, totalAlumnos],
+          label: 'Usuarios registrados',
+          backgroundColor: [
+            '#F88406',
+            '#FCFF44',
+            '#82D3FB'
+          ]
+        }
+      ]
+    };
   }
 
 }

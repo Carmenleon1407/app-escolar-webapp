@@ -53,13 +53,13 @@
     <!-- Formularios de registro según el tipo seleccionado -->
     <div class="forms-area">
       <!-- Formularios (vistas) de cada usuario (inyección dinámica) -->
-      <app-registro-admin *ngIf="isAdmin" [rol]="tipo_user" [datos_user]="user"></app-registro-admin>
+      <app-registro-admin *ngIf="isAdmin" [rol]="tipo_user" [datos_user]="user" [editar]="editar"></app-registro-admin>
 
       <app-registro-alumnos *ngIf="isAlumno" [rol]="tipo_user"
-        [datos_user]="editar ? user : null"></app-registro-alumnos>
+        [datos_user]="editar ? user : null" [editar]="editar"></app-registro-alumnos>
 
       <app-registro-maestros *ngIf="isMaestro" [rol]="tipo_user"
-        [datos_user]="editar ? user : null"></app-registro-maestros>
+        [datos_user]="editar ? user : null" [editar]="editar"></app-registro-maestros>
 
     </div>
   </div>

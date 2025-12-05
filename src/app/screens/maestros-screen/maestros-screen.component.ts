@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { FacadeService } from 'src/app/services/facade.service';
@@ -24,9 +25,26 @@ export class MaestrosScreenComponent implements OnInit {
   dataSource = new MatTableDataSource<DatosUsuario>(this.lista_maestros as DatosUsuario[]);
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
 
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
+    if (this.sort) {
+      this.dataSource.sort = this.sort;
+      // custom sorting for combined name column
+      this.dataSource.sortingDataAccessor = (item, property) => {
+        switch (property) {
+          case 'nombre': return (item.first_name || '') + ' ' + (item.last_name || '');
+          case 'id_trabajador': return item.id_trabajador;
+          default: return item[property];
+        }
+      };
+      // filter by first_name or last_name
+      this.dataSource.filterPredicate = (data, filter) => {
+        const fullName = ((data.first_name || '') + ' ' + (data.last_name || '')).toLowerCase();
+        return fullName.indexOf(filter) !== -1;
+      };
+    }
   }
 
   constructor(
@@ -67,12 +85,34 @@ export class MaestrosScreenComponent implements OnInit {
           console.log("Maestros: ", this.lista_maestros);
 
           this.dataSource = new MatTableDataSource<DatosUsuario>(this.lista_maestros as DatosUsuario[]);
+          // Reaplicar paginador y ordenamiento
+          this.dataSource.paginator = this.paginator;
+          if (this.sort) {
+            this.dataSource.sort = this.sort;
+            this.dataSource.sortingDataAccessor = (item, property) => {
+              switch (property) {
+                case 'nombre': return (item.first_name || '') + ' ' + (item.last_name || '');
+                case 'id_trabajador': return item.id_trabajador;
+                default: return item[property];
+              }
+            };
+            this.dataSource.filterPredicate = (data, filter) => {
+              const fullName = ((data.first_name || '') + ' ' + (data.last_name || '')).toLowerCase();
+              return fullName.indexOf(filter) !== -1;
+            };
+          }
         }
       }, (error) => {
         console.error("Error al obtener la lista de maestros: ", error);
         alert("No se pudo obtener la lista de maestros");
       }
     );
+  }
+
+  // Filtrado por texto (nombre / apellidos)
+  public applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
   public goEditar(idUser: number) {

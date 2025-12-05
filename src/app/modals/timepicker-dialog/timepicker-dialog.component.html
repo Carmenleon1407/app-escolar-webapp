@@ -1,0 +1,61 @@
+<div class="timepicker-container">
+  <h2 mat-dialog-title>Seleccionar Hora</h2>
+
+  <div mat-dialog-content class="timepicker-content">
+    <!-- Selector de Hora -->
+    <div class="time-unit">
+      <label>Hora</label>
+      <div class="control-group">
+        <button mat-icon-button (click)="incrementarHora()" class="btn-control">
+          <mat-icon>expand_less</mat-icon>
+        </button>
+        <input
+          type="number"
+          class="time-input"
+          [(ngModel)]="hora"
+          (change)="onHoraChange($event)"
+          min="0"
+          max="23"
+          [value]="hora | number:'2.0-0'">
+        <button mat-icon-button (click)="decrementarHora()" class="btn-control">
+          <mat-icon>expand_more</mat-icon>
+        </button>
+      </div>
+    </div>
+
+    <!-- Separador -->
+    <div class="time-separator">:</div>
+
+    <!-- Selector de Minuto -->
+    <div class="time-unit">
+      <label>Minuto</label>
+      <div class="control-group">
+        <button mat-icon-button (click)="incrementarMinuto()" class="btn-control">
+          <mat-icon>expand_less</mat-icon>
+        </button>
+        <input
+          type="number"
+          class="time-input"
+          [(ngModel)]="minuto"
+          (change)="onMinutoChange($event)"
+          min="0"
+          max="59"
+          [value]="minuto | number:'2.0-0'">
+        <button mat-icon-button (click)="decrementarMinuto()" class="btn-control">
+          <mat-icon>expand_more</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Visualización de Hora -->
+  <div class="time-display">
+    <span class="time-value">{{ hora | number:'2.0-0' }}:{{ minuto | number:'2.0-0' }}</span>
+  </div>
+
+  <!-- Botones de Acción -->
+  <div mat-dialog-actions class="dialog-actions">
+    <button mat-button (click)="cancelar()" class="btn-cancel">Cancelar</button>
+    <button mat-button (click)="confirmar()" color="primary" class="btn-confirm">Confirmar</button>
+  </div>
+</div>

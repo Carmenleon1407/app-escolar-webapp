@@ -13,10 +13,10 @@ export class RegistroAdminComponent implements OnInit {
 
   @Input() rol: string = "";
   @Input() datos_user: any = {};
+  @Input() editar: boolean = false;
 
   public admin:any = {};
   public errors:any = {};
-  public editar:boolean = false;
   public token: string = "";
   public idUser: Number = 0;
 

@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
@@ -27,6 +27,8 @@ import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatSelectModule} from '@angular/material/select';
 import {MatTableModule} from '@angular/material/table';
 import {MatDialogModule} from '@angular/material/dialog';
+import {MatSortModule} from '@angular/material/sort';
+import {MatTooltipModule} from '@angular/material/tooltip';
 
 // Paginación
 import {MatPaginatorIntl, MatPaginatorModule} from '@angular/material/paginator';
@@ -48,7 +50,11 @@ import { AdminScreenComponent } from './screens/admin-screen/admin-screen.compon
 import { NavbarUserComponent } from './partials/navbar-user/navbar-user.component';
 import { SidebarComponent } from './partials/sidebar/sidebar.component';
 import { EliminarUserModalComponent } from './modals/eliminar-user-modal/eliminar-user-modal.component';
+import { EliminarEventoModalComponent } from './modals/eliminar-evento-modal/eliminar-evento-modal.component';
 import { GraficasScreenComponent } from './screens/graficas-screen/graficas-screen.component';
+import { EventosAcademicosScreenComponent } from './screens/eventos-academicos-screen/eventos-academicos-screen.component';
+import { EventosListaScreenComponent } from './screens/eventos-lista-screen/eventos-lista-screen.component';
+import { TimepickerDialogComponent } from './modals/timepicker-dialog/timepicker-dialog.component';
 
 @NgModule({
   declarations: [
@@ -67,13 +73,18 @@ import { GraficasScreenComponent } from './screens/graficas-screen/graficas-scre
     NavbarUserComponent,
     SidebarComponent,
     EliminarUserModalComponent,
-    GraficasScreenComponent
+    EliminarEventoModalComponent,
+    GraficasScreenComponent,
+    EventosAcademicosScreenComponent,
+    EventosListaScreenComponent,
+    TimepickerDialogComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
     FormsModule,
+    ReactiveFormsModule,
     HttpClientModule,
     MatCardModule,
     MatIconModule,
@@ -87,9 +98,11 @@ import { GraficasScreenComponent } from './screens/graficas-screen/graficas-scre
     MatSelectModule,
     MatButtonModule,
     MatTableModule,
+    MatSortModule,
     MatPaginatorModule,
     MatSidenavModule,
     MatDialogModule,
+    MatTooltipModule,
     NgChartsModule
   ],
   providers: [

@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, OnChanges, SimpleChanges, ChangeDetectorRef } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FacadeService } from 'src/app/services/facade.service';
 import { Location } from '@angular/common';
@@ -13,6 +13,7 @@ export class RegistroMaestrosComponent implements OnInit {
 
   @Input() rol: string = "";
   @Input() datos_user: any = {};
+  @Input() editar: boolean = false;
 
   //Para contraseñas
   public hide_1: boolean = false;
@@ -22,7 +23,6 @@ export class RegistroMaestrosComponent implements OnInit {
 
   public maestro:any = {};
   public errors:any = {};
-  public editar:boolean = false;
   public token: string = "";
   public idUser: Number = 0;
 
@@ -54,15 +54,49 @@ export class RegistroMaestrosComponent implements OnInit {
     private location : Location,
     public activatedRoute: ActivatedRoute,
     private facadeService: FacadeService,
-    private maestrosService: MaestrosService
+    private maestrosService: MaestrosService,
+    private cd: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
-    this.maestro = this.maestrosService.esquemaMaestro();
-    // Rol del usuario
-    this.maestro.rol = this.rol;
+    // Inicializar el esquema SOLO si no recibimos datos_user desde el parent
+    if (!this.datos_user) {
+      this.maestro = this.maestrosService.esquemaMaestro();
+      // Rol del usuario
+      this.maestro.rol = this.rol;
+    }
+    console.log("Datos maestro (init): ", this.maestro);
+  }
 
-    console.log("Datos maestro: ", this.maestro);
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['datos_user'] && this.datos_user) {
+      this.editar = true;
+      const du = this.datos_user;
+      // Log serializado para ver la estructura real que llega
+      try { console.log('ngOnChanges - datos_user (maestro):', JSON.stringify(du)); } catch(e) { console.log('ngOnChanges - datos_user (maestro):', du); }
+      this.maestro = this.maestrosService.esquemaMaestro();
+      // Normalizar: preferir campos en du.user si existen, y hacer merge
+      const userObj = du.user ? Object.assign({}, du.user, du) : du;
+      this.maestro.id = userObj.id || userObj.user?.id || this.maestro.id;
+      this.maestro.first_name = userObj.first_name || '';
+      this.maestro.last_name = userObj.last_name || '';
+      this.maestro.email = userObj.email || '';
+      this.maestro.id_trabajador = userObj.id_trabajador || '';
+      this.maestro.fecha_nacimiento = userObj.fecha_nacimiento || '';
+      this.maestro.telefono = userObj.telefono || '';
+      this.maestro.rfc = userObj.rfc || '';
+      this.maestro.cubiculo = userObj.cubiculo || '';
+      this.maestro.area_investigacion = userObj.area_investigacion || '';
+      try{
+        this.maestro.materias_json = Array.isArray(userObj.materias_json) ? userObj.materias_json : JSON.parse(userObj.materias_json || '[]');
+      }catch(e){
+        this.maestro.materias_json = [];
+      }
+      try { console.log('Datos maestro:', JSON.stringify(this.maestro)); } catch(e) { console.log('Datos maestro:', this.maestro); }
+      console.log('Campo first_name maestro:', this.maestro.first_name, 'id_trabajador:', this.maestro.id_trabajador);
+      // Forzar detección de cambios para asegurar que los valores se muestren
+      try { this.cd.detectChanges(); } catch(e) { /* ignore */ }
+    }
   }
 
   public regresar(){
@@ -103,6 +137,24 @@ export class RegistroMaestrosComponent implements OnInit {
     }
   }
   public actualizar(){
+
+    this.errors = {};
+    this.errors = this.maestrosService.validarMaestro(this.maestro, true);
+    if(Object.keys(this.errors).length > 0){
+      return false;
+    }
+
+    this.maestrosService.actualizarMaestro(this.maestro).subscribe(
+      (response) => {
+        alert("Maestro actualizado correctamente");
+        console.log("Maestro actualizado: ", response);
+        this.router.navigate(["maestros"]);
+      },
+      (error) => {
+        alert("Error al actualizar maestro");
+        console.error("Error al actualizar maestro: ", error);
+      }
+    );
 
   }
 

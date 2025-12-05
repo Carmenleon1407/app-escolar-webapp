@@ -1,0 +1,268 @@
+<div class="wrapper main-content-eventos">
+  <!-- Encabezado con bienvenida -->
+  <div class="header-home-eventos"></div>
+
+  <div class="body-eventos">
+    <!-- Títulos de bienvenida -->
+    <div class="row mt-5 mb-5">
+      <div class="col-12">
+        <span class="title-perfil">Bienvenido {{ name_user }}</span>
+        <br>
+        <span class="title-perfil">{{ rol }}</span>
+      </div>
+    </div>
+
+    <!-- Contenedor del formulario -->
+    <div class="container">
+      <div class="row mt-3 mb-5">
+        <div class="col-12">
+          <div class="alert alert-primary" role="alert">
+            <span class="title-table">Registro de Eventos Académicos</span>
+          </div>
+        </div>
+
+        <!-- Formulario -->
+        <div class="col-12">
+          <mat-card class="form-card">
+            <mat-card-header>
+              <mat-card-title class="form-title">Crear nuevo evento</mat-card-title>
+              <mat-card-subtitle class="form-subtitle">
+                Completa todos los campos obligatorios (*) para registrar un nuevo evento académico
+              </mat-card-subtitle>
+            </mat-card-header>
+
+            <mat-card-content>
+              <form [formGroup]="formularioEvento" (ngSubmit)="registrarEvento()">
+                <div class="form-grid">
+
+                  <!-- Nombre del evento -->
+                  <div class="form-group">
+                    <label for="nombre_evento">Nombre del evento *</label>
+                    <mat-form-field class="w-100" appearance="outline">
+                      <input
+                        matInput
+                        id="nombre_evento"
+                        formControlName="nombre_evento"
+                        placeholder="Ingrese el nombre del evento"
+                        [class.is-invalid]="tieneError('nombre_evento')">
+                      <mat-error *ngIf="tieneError('nombre_evento')">
+                        {{ obtenerMensajeError('nombre_evento') }}
+                      </mat-error>
+                    </mat-form-field>
+                  </div>
+
+                  <!-- Tipo de evento -->
+                  <div class="form-group">
+                    <label for="tipo_evento">Tipo de evento *</label>
+                    <mat-form-field class="w-100" appearance="outline">
+                      <mat-label>Seleccione un tipo</mat-label>
+                      <mat-select id="tipo_evento" formControlName="tipo_evento">
+                        <mat-option *ngFor="let tipo of tiposEvento" [value]="tipo">
+                          {{ tipo }}
+                        </mat-option>
+                      </mat-select>
+                      <mat-error *ngIf="tieneError('tipo_evento')">
+                        {{ obtenerMensajeError('tipo_evento') }}
+                      </mat-error>
+                    </mat-form-field>
+                  </div>
+
+                  <!-- Fecha de realización -->
+                  <div class="form-group">
+                    <label for="fecha_realizacion">Fecha de realización *</label>
+                    <mat-form-field class="w-100" appearance="outline">
+                      <mat-label>Seleccione una fecha (dd/MM/yyyy)</mat-label>
+                      <input
+                        matInput
+                        id="fecha_realizacion"
+                        formControlName="fecha_realizacion"
+                        [matDatepicker]="picker"
+                        placeholder="dd/MM/yyyy"
+                        [class.is-invalid]="tieneError('fecha_realizacion')">
+                      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                      <mat-datepicker #picker></mat-datepicker>
+                      <mat-error *ngIf="tieneError('fecha_realizacion')">
+                        {{ obtenerMensajeError('fecha_realizacion') }}
+                      </mat-error>
+                    </mat-form-field>
+                  </div>
+
+                  <!-- Hora inicio -->
+                  <div class="form-group">
+                    <label for="hora_inicio">Hora de inicio *</label>
+                    <mat-form-field class="w-100" appearance="outline">
+                      <mat-label>Seleccione hora inicio</mat-label>
+                      <input
+                        matInput
+                        id="hora_inicio"
+                        formControlName="hora_inicio"
+                        placeholder="HH:mm"
+                        readonly
+                        (click)="abrirTimepickerInicio()"
+                        [class.is-invalid]="tieneError('hora_inicio')">
+                      <mat-icon matSuffix (click)="abrirTimepickerInicio()" style="cursor: pointer;">access_time</mat-icon>
+                      <mat-error *ngIf="tieneError('hora_inicio')">
+                        {{ obtenerMensajeError('hora_inicio') }}
+                      </mat-error>
+                    </mat-form-field>
+                  </div>
+
+                  <!-- Hora final -->
+                  <div class="form-group">
+                    <label for="hora_final">Hora final *</label>
+                    <mat-form-field class="w-100" appearance="outline">
+                      <mat-label>Seleccione hora final</mat-label>
+                      <input
+                        matInput
+                        id="hora_final"
+                        formControlName="hora_final"
+                        placeholder="HH:mm"
+                        readonly
+                        (click)="abrirTimepickerFinal()"
+                        [class.is-invalid]="tieneError('hora_final')">
+                      <mat-icon matSuffix (click)="abrirTimepickerFinal()" style="cursor: pointer;">access_time</mat-icon>
+                      <mat-error *ngIf="tieneError('hora_final')">
+                        {{ obtenerMensajeError('hora_final') }}
+                      </mat-error>
+                    </mat-form-field>
+                  </div>
+
+                  <!-- Lugar -->
+                  <div class="form-group">
+                    <label for="lugar">Lugar *</label>
+                    <mat-form-field class="w-100" appearance="outline">
+                      <mat-label>Lugar del evento</mat-label>
+                      <input
+                        matInput
+                        id="lugar"
+                        formControlName="lugar"
+                        placeholder="Ingrese el lugar del evento"
+                        [class.is-invalid]="tieneError('lugar')"
+                        hint="Solo se permiten caracteres alfanuméricos y espacios">
+                      <mat-hint align="end">Solo alfanuméricos y espacios</mat-hint>
+                      <mat-error *ngIf="tieneError('lugar')">
+                        {{ obtenerMensajeError('lugar') }}
+                      </mat-error>
+                    </mat-form-field>
+                  </div>
+
+                  <!-- Público objetivo -->
+                  <div class="form-group">
+                    <label>Público objetivo *</label>
+                    <div class="checkbox-group">
+                      <mat-checkbox
+                        *ngFor="let publico of publicosObjetivo"
+                        [checked]="isCheckboxChecked(publico.valor)"
+                        (change)="onCheckboxChange($event, publico)"
+                        class="checkbox-item">
+                        {{ publico.valor }}
+                      </mat-checkbox>
+                    </div>
+                    <mat-error *ngIf="tieneError('publico_objetivo')" class="error-message">
+                      {{ obtenerMensajeError('publico_objetivo') }}
+                    </mat-error>
+                  </div>
+
+                  <!-- Programa educativo (solo si público objetivo es "Estudiantes") -->
+                  <div class="form-group" *ngIf="mostrarProgramaEducativo">
+                    <label for="programa_educativo">Programa educativo *</label>
+                    <mat-form-field class="w-100" appearance="outline">
+                      <mat-label>Seleccione un programa</mat-label>
+                      <mat-select id="programa_educativo" formControlName="programa_educativo">
+                        <mat-option *ngFor="let programa of programasEducativos" [value]="programa.id">
+                          {{ programa.nombre }}
+                        </mat-option>
+                      </mat-select>
+                      <mat-error *ngIf="tieneError('programa_educativo')">
+                        {{ obtenerMensajeError('programa_educativo') }}
+                      </mat-error>
+                    </mat-form-field>
+                  </div>
+
+                  <!-- Responsable del evento -->
+                  <div class="form-group">
+                    <label for="responsable_evento">Responsable del evento *</label>
+                    <mat-form-field class="w-100" appearance="outline">
+                      <mat-label>Seleccione un responsable</mat-label>
+                      <mat-select id="responsable_evento" formControlName="responsable_evento">
+                        <mat-option *ngFor="let responsable of listaResponsables" [value]="responsable.id">
+                          {{ responsable.nombre }} - {{ responsable.tipo }}
+                        </mat-option>
+                      </mat-select>
+                      <mat-error *ngIf="tieneError('responsable_evento')">
+                        {{ obtenerMensajeError('responsable_evento') }}
+                      </mat-error>
+                    </mat-form-field>
+                  </div>
+
+                  <!-- Descripción breve (ocupa 2 columnas) -->
+                  <div class="form-group form-group-full">
+                    <label for="descripcion_breve">Descripción breve *</label>
+                    <mat-form-field class="w-100" appearance="outline">
+                      <mat-label>Descripción del evento</mat-label>
+                      <textarea
+                        matInput
+                        id="descripcion_breve"
+                        formControlName="descripcion_breve"
+                        rows="4"
+                        maxlength="300"
+                        placeholder="Ingrese una descripción breve del evento (máximo 300 caracteres)"
+                        [class.is-invalid]="tieneError('descripcion_breve')"></textarea>
+                      <mat-hint align="end">{{ formularioEvento.get('descripcion_breve')?.value?.length || 0 }}/300</mat-hint>
+                      <mat-error *ngIf="tieneError('descripcion_breve')">
+                        {{ obtenerMensajeError('descripcion_breve') }}
+                      </mat-error>
+                    </mat-form-field>
+                  </div>
+
+                  <!-- Cupo máximo -->
+                  <div class="form-group">
+                    <label for="cupo_maximo_asistentes">Cupo máximo de asistentes *</label>
+                    <mat-form-field class="w-100" appearance="outline">
+                      <mat-label>Cupo máximo</mat-label>
+                      <input
+                        matInput
+                        id="cupo_maximo_asistentes"
+                        type="number"
+                        formControlName="cupo_maximo_asistentes"
+                        min="1"
+                        max="999"
+                        maxlength="3"
+                        placeholder="Ingrese el cupo máximo (máx. 999)"
+                        [class.is-invalid]="tieneError('cupo_maximo_asistentes')">
+                      <mat-hint>Máximo 3 dígitos</mat-hint>
+                      <mat-error *ngIf="tieneError('cupo_maximo_asistentes')">
+                        {{ obtenerMensajeError('cupo_maximo_asistentes') }}
+                      </mat-error>
+                    </mat-form-field>
+                  </div>
+                </div>
+
+                <!-- Botones de acción -->
+                <div class="form-actions">
+                  <button
+                    mat-raised-button
+                    color="primary"
+                    type="submit"
+                    [disabled]="formularioEvento.invalid"
+                    class="action-btn">
+                    <mat-icon>check</mat-icon>
+                    Registrar Evento
+                  </button>
+                  <button
+                    mat-stroked-button
+                    type="button"
+                    (click)="limpiarFormulario()"
+                    class="action-btn">
+                    <mat-icon>clear</mat-icon>
+                    Limpiar
+                  </button>
+                </div>
+              </form>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

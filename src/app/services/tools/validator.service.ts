@@ -76,6 +76,12 @@ export class ValidatorService {
     console.log(pat.test(input), input);
     return pat.test(input);
   }
+
+  // Validar nombre de evento: letras, números y espacios sin caracteres especiales
+  eventName(input: any): boolean {
+    let pat = new RegExp('^[A-Za-zÑñáéíóúÁÉÍÓÚ0-9 ]+$');
+    return pat.test(input);
+  }
   // public isEmail(email:string):boolean{
   //   const re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   //   return re.test(email);

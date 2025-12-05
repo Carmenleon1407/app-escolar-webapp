@@ -147,4 +147,32 @@ export class MaestrosService {
     }
     return this.http.delete<any>(`${environment.url_api}/maestros/?id=${idMaestro}`, { headers });
   }
+
+  // Obtener maestro por ID
+  public obtenerMaestroPorID(idMaestro: number): Observable<any>{
+    const token = this.facadeService.getSessionToken();
+    let headers: HttpHeaders;
+    if (token) {
+      headers = new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token });
+    } else {
+      headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    }
+    return this.http.get<any>(`${environment.url_api}/maestros/${idMaestro}/`, { headers });
+  }
+
+  // Actualizar maestro
+  public actualizarMaestro(data: any): Observable<any> {
+    const token = this.facadeService.getSessionToken();
+    let headers: HttpHeaders;
+    if (token) {
+      headers = new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token });
+    } else {
+      headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    }
+    if (data && (data.id || data.user?.id)) {
+      const id = data.id || data.user.id;
+      return this.http.put<any>(`${environment.url_api}/maestros/${id}/`, data, { headers });
+    }
+    return this.http.put<any>(`${environment.url_api}/maestros/`, data, { headers });
+  }
 }

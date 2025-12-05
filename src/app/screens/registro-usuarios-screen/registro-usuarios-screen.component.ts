@@ -4,6 +4,8 @@ import { Location } from '@angular/common';
 import { FacadeService } from 'src/app/services/facade.service';
 import { MatRadioChange } from '@angular/material/radio';
 import { AdministradoresService } from 'src/app/services/administradores.service';
+import { AlumnosService } from 'src/app/services/alumnos.service';
+import { MaestrosService } from 'src/app/services/maestros.service';
 
 @Component({
   selector: 'app-registro-usuarios-screen',
@@ -30,14 +32,19 @@ export class RegistroUsuariosScreenComponent implements OnInit {
     public activatedRoute: ActivatedRoute,
     private router: Router,
     public facadeService: FacadeService,
-    private administradoresService: AdministradoresService
+    private administradoresService: AdministradoresService,
+    private alumnosService: AlumnosService,
+    private maestrosService: MaestrosService
   ) { }
 
   ngOnInit(): void {
     this.user.tipo_usuario = '';
     //Obtener de la URL el rol para saber cual editar
     if(this.activatedRoute.snapshot.params['rol'] != undefined){
-      this.rol = this.activatedRoute.snapshot.params['rol'];
+      // Normalizar rol: la UI a veces navega con plurales ('alumnos','maestros')
+      const rawRol = this.activatedRoute.snapshot.params['rol'];
+      // Mapear plurales a singular (alumnos -> alumno, maestros -> maestro)
+      this.rol = rawRol.endsWith('s') ? rawRol.slice(0, -1) : rawRol;
       console.log("Rol detectado: ", this.rol);
     }
 
@@ -79,23 +86,58 @@ export class RegistroUsuariosScreenComponent implements OnInit {
     if(this.rol == "administrador"){
       this.administradoresService.obtenerAdminPorID(this.idUser).subscribe(
         (response) => {
-          this.user = response;
+          const payload = Array.isArray(response) ? response[0] : response;
+          this.user = payload;
           console.log("Usuario original obtenido: ", this.user);
           // Asignar datos, soportando respuesta plana o anidada
-          this.user.first_name = response.user?.first_name || response.first_name;
-          this.user.last_name = response.user?.last_name || response.last_name;
-          this.user.email = response.user?.email || response.email;
+          this.user.first_name = payload.user?.first_name || payload.first_name;
+          this.user.last_name = payload.user?.last_name || payload.last_name;
+          this.user.email = payload.user?.email || payload.email;
           this.user.tipo_usuario = this.rol;
           this.isAdmin = true;
         }, (error) => {
           console.log("Error: ", error);
           alert("No se pudo obtener el administrador seleccionado");
+          // Mostrar el formulario de administrador aun si la petición falla
+          this.isAdmin = true;
         }
       );
     }else if(this.rol == "maestro"){
-      // TODO: Implementar lógica para obtener maestro por ID
+      this.maestrosService.obtenerMaestroPorID(this.idUser).subscribe(
+        (response) => {
+          const payload = Array.isArray(response) ? response[0] : response;
+          this.user = payload;
+          console.log("Maestro original obtenido: ", this.user);
+          this.user.first_name = payload.user?.first_name || payload.first_name;
+          this.user.last_name = payload.user?.last_name || payload.last_name;
+          this.user.email = payload.user?.email || payload.email;
+          this.user.tipo_usuario = this.rol;
+          this.isMaestro = true;
+        }, (error) => {
+          console.log("Error: ", error);
+          alert("No se pudo obtener el maestro seleccionado");
+          // Mostrar el formulario de maestro aun si la petición falla
+          this.isMaestro = true;
+        }
+      );
     }else if(this.rol == "alumno"){
-      // TODO: Implementar lógica para obtener alumno por ID
+      this.alumnosService.obtenerAlumnoPorID(this.idUser).subscribe(
+        (response) => {
+          const payload = Array.isArray(response) ? response[0] : response;
+          this.user = payload;
+          console.log("Alumno original obtenido: ", this.user);
+          this.user.first_name = payload.user?.first_name || payload.first_name;
+          this.user.last_name = payload.user?.last_name || payload.last_name;
+          this.user.email = payload.user?.email || payload.email;
+          this.user.tipo_usuario = this.rol;
+          this.isAlumno = true;
+        }, (error) => {
+          console.log("Error: ", error);
+          alert("No se pudo obtener el alumno seleccionado");
+          // Mostrar el formulario de alumno aun si la petición falla
+          this.isAlumno = true;
+        }
+      );
     }
 
   }
