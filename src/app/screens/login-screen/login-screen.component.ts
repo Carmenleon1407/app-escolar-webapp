@@ -39,8 +39,8 @@ export class LoginScreenComponent implements OnInit {
         // Guardar el token en el almacenamiento local - las cookies
         this.facadeService.saveUserData(response);
         // Redirigir según el rol
-        const role = response.rol;
-        if (role === 'administrador') {
+        const role = response.rol.toLowerCase();
+        if (role === 'admin' || role === 'administrador') {
           this.router.navigate(["/administrador"]);
         } else if (role === 'maestro') {
           this.router.navigate(["/maestros"]);
