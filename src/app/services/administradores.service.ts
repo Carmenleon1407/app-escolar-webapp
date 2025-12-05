@@ -111,7 +111,7 @@ export class AdministradoresService {
     const token = this.facadeService.getSessionToken();
     let headers: HttpHeaders;
     if (token) {
-      headers = new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token });
+      headers = new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': 'Token ' + token });
     } else {
       headers = new HttpHeaders({ 'Content-Type': 'application/json' });
     }
@@ -123,7 +123,7 @@ export class AdministradoresService {
     const token = this.facadeService.getSessionToken();
     let headers: HttpHeaders;
     if (token) {
-      headers = new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token });
+      headers = new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': 'Token ' + token });
     } else {
       headers = new HttpHeaders({ 'Content-Type': 'application/json' });
       console.log("No se encontró el token del usuario");
@@ -137,7 +137,7 @@ export class AdministradoresService {
     const token = this.facadeService.getSessionToken();
     let headers: HttpHeaders;
     if (token) {
-      headers = new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token });
+      headers = new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': 'Token ' + token });
     } else {
       headers = new HttpHeaders({ 'Content-Type': 'application/json' });
       console.log("No se encontró el token del usuario");
@@ -149,7 +149,7 @@ export class AdministradoresService {
     const token = this.facadeService.getSessionToken();
     let headers: HttpHeaders;
     if (token) {
-      headers = new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token });
+      headers = new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': 'Token ' + token });
     } else {
       headers = new HttpHeaders({ 'Content-Type': 'application/json' });
       console.log("No se encontró el token del usuario");
@@ -162,7 +162,7 @@ export class AdministradoresService {
     const token = this.facadeService.getSessionToken();
     let headers: HttpHeaders;
     if (token) {
-      headers = new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token });
+      headers = new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': 'Token ' + token });
     } else {
       headers = new HttpHeaders({ 'Content-Type': 'application/json' });
       console.log("No se encontró el token del usuario");
@@ -175,7 +175,7 @@ export class AdministradoresService {
     const token = this.facadeService.getSessionToken();
     let headers: HttpHeaders;
     if (token) {
-      headers = new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token });
+      headers = new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': 'Token ' + token });
     } else {
       headers = new HttpHeaders({ 'Content-Type': 'application/json' });
       console.log("No se encontró el token del usuario");
