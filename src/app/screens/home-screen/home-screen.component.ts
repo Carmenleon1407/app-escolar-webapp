@@ -17,7 +17,8 @@ export class HomeScreenComponent implements OnInit{
   ){}
 
   ngOnInit(): void {
-    this.rol = this.facadeService.getUserGroup();
+    const rawRol = this.facadeService.getUserGroup();
+    this.rol = rawRol ? rawRol.toLowerCase() : '';
     console.log("Rol: ", this.rol);
   }
 
