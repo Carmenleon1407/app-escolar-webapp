@@ -4,6 +4,7 @@ import { FacadeService } from './facade.service';
 import { ErrorsService } from './tools/errors.service';
 import { ValidatorService } from './tools/validator.service';
 import { Observable } from 'rxjs';
+import { catchError, throwError } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
 const httpOptions = {
@@ -52,7 +53,8 @@ export class EventosAcademicosService {
       'Content-Type': 'application/json',
       'Authorization': `Token ${token}`
     });
-    return this.http.post(`${environment.url_api}/api/eventos/`, evento, { headers });
+    const url = `${environment.url_api}/eventos/`;
+    return this.http.post(url, evento, { headers });
   }
 
   /**
@@ -64,7 +66,8 @@ export class EventosAcademicosService {
     const headers = new HttpHeaders({
       'Authorization': `Token ${token}`
     });
-    return this.http.get<any[]>(`${environment.url_api}/api/eventos/`, { headers });
+    const url = `${environment.url_api}/eventos/`;
+    return this.http.get<any[]>(url, { headers });
   }
 
   /**
@@ -77,7 +80,8 @@ export class EventosAcademicosService {
     const headers = new HttpHeaders({
       'Authorization': `Token ${token}`
     });
-    return this.http.get<any>(`${environment.url_api}/api/eventos/${id}/`, { headers });
+    const url = `${environment.url_api}/eventos/${id}/`;
+    return this.http.get<any>(url, { headers });
   }
 
   /**
@@ -92,7 +96,8 @@ export class EventosAcademicosService {
       'Content-Type': 'application/json',
       'Authorization': `Token ${token}`
     });
-    return this.http.put(`${environment.url_api}/api/eventos/${id}/`, evento, { headers });
+    const url = `${environment.url_api}/eventos/${id}/`;
+    return this.http.put(url, evento, { headers });
   }
 
   /**
@@ -105,7 +110,8 @@ export class EventosAcademicosService {
     const headers = new HttpHeaders({
       'Authorization': `Token ${token}`
     });
-    return this.http.delete(`${environment.url_api}/api/eventos/${id}/`, { headers });
+    const url = `${environment.url_api}/eventos/${id}/`;
+    return this.http.delete(url, { headers });
   }
 
   /**

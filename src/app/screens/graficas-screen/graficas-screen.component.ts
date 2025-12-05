@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import DatalabelsPlugin from 'chartjs-plugin-datalabels';
 import { AdministradoresService } from 'src/app/services/administradores.service';
+import { EventosAcademicosService } from 'src/app/services/eventos-academicos.service';
 
 @Component({
   selector: 'app-graficas-screen',
@@ -13,13 +14,15 @@ export class GraficasScreenComponent implements OnInit{
   //Variables
 
   public total_user: any = {};
+  public eventos: any[] = [];
+  public eventosMap: Map<string, number> = new Map();
 
   //Histograma
-  lineChartData = {
-    labels: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+  lineChartData: any = {
+    labels: [],
     datasets: [
       {
-        data:[89, 34, 43, 54, 28, 74, 93],
+        data:[],
         label: 'Registro de materias',
         backgroundColor: '#F88406'
       }
@@ -31,19 +34,13 @@ export class GraficasScreenComponent implements OnInit{
   lineChartPlugins = [ DatalabelsPlugin ];
 
   //Barras
-  barChartData = {
-    labels: ["Congreso", "FePro", "Presentación Doctoral", "Feria Matemáticas", "T-System"],
+  barChartData: any = {
+    labels: [],
     datasets: [
       {
-        data:[34, 43, 54, 28, 74],
+        data:[],
         label: 'Eventos Académicos',
-        backgroundColor: [
-          '#F88406',
-          '#FCFF44',
-          '#82D3FB',
-          '#FB82F5',
-          '#2AD84A'
-        ]
+        backgroundColor: []
       }
     ]
   }
@@ -53,11 +50,11 @@ export class GraficasScreenComponent implements OnInit{
   barChartPlugins = [ DatalabelsPlugin ];
 
   //Circular
-  pieChartData = {
+  pieChartData: any = {
     labels: ["Administradores", "Maestros", "Alumnos"],
     datasets: [
       {
-        data:[89, 34, 43],
+        data:[],
         label: 'Registro de usuarios',
         backgroundColor: [
           '#FCFF44',
@@ -73,11 +70,11 @@ export class GraficasScreenComponent implements OnInit{
   pieChartPlugins = [ DatalabelsPlugin ];
 
   // Doughnut
-  doughnutChartData = {
+  doughnutChartData: any = {
     labels: ["Administradores", "Maestros", "Alumnos"],
     datasets: [
       {
-        data:[89, 34, 43],
+        data:[],
         label: 'Registro de usuarios',
         backgroundColor: [
           '#F88406',
@@ -93,11 +90,13 @@ export class GraficasScreenComponent implements OnInit{
   doughnutChartPlugins = [ DatalabelsPlugin ];
 
   constructor(
-    private administradoresServices: AdministradoresService
+    private administradoresServices: AdministradoresService,
+    private eventosService: EventosAcademicosService
   ) { }
 
   ngOnInit(): void {
     this.obtenerTotalUsers();
+    this.obtenerEventosAcademicos();
   }
 
   // Función para obtener el total de usuarios registrados
@@ -108,7 +107,7 @@ export class GraficasScreenComponent implements OnInit{
         console.log("Total usuarios: ", this.total_user);
 
         // Actualizar las gráficas con datos dinámicos
-        this.actualizarGraficas();
+        this.actualizarGraficasUsuarios();
       }, (error)=>{
         console.log("Error al obtener total de usuarios ", error);
         alert("No se pudo obtener el total de cada rol de usuarios");
@@ -116,8 +115,81 @@ export class GraficasScreenComponent implements OnInit{
     );
   }
 
-  // Actualizar gráficas con datos dinámicos
-  private actualizarGraficas() {
+  // Obtener eventos académicos
+  public obtenerEventosAcademicos(){
+    this.eventosService.obtenerEventos().subscribe(
+      (response) => {
+        this.eventos = response;
+        console.log("Eventos académicos: ", this.eventos);
+
+        // Procesar eventos para gráficas
+        this.procesarEventosParaGraficas();
+      }, (error) => {
+        console.log("Error al obtener eventos académicos ", error);
+      }
+    );
+  }
+
+  // Procesar eventos para obtener estadísticas
+  private procesarEventosParaGraficas() {
+    this.eventosMap.clear();
+
+    // Contar eventos por tipo
+    this.eventos.forEach(evento => {
+      const tipo = evento.tipo_evento || 'Sin especificar';
+      const count = this.eventosMap.get(tipo) || 0;
+      this.eventosMap.set(tipo, count + 1);
+    });
+
+    // Actualizar gráficas de eventos
+    this.actualizarGraficasEventos();
+  }
+
+  // Actualizar gráficas de eventos
+  private actualizarGraficasEventos() {
+    const labels = Array.from(this.eventosMap.keys());
+    const data = Array.from(this.eventosMap.values());
+
+    const colores = [
+      '#F88406',
+      '#FCFF44',
+      '#82D3FB',
+      '#FB82F5',
+      '#2AD84A',
+      '#FF6B6B',
+      '#4ECDC4',
+      '#45B7D1'
+    ];
+
+    // Actualizar gráfica de línea (histograma)
+    this.lineChartData = {
+      labels: labels,
+      datasets: [
+        {
+          data: data,
+          label: 'Eventos por tipo',
+          backgroundColor: '#F88406',
+          borderColor: '#F88406',
+          fill: false
+        }
+      ]
+    };
+
+    // Actualizar gráfica de barras
+    this.barChartData = {
+      labels: labels,
+      datasets: [
+        {
+          data: data,
+          label: 'Eventos Académicos',
+          backgroundColor: colores.slice(0, labels.length)
+        }
+      ]
+    };
+  }
+
+  // Actualizar gráficas con datos dinámicos de usuarios
+  private actualizarGraficasUsuarios() {
     const totalAdmins = this.total_user.administradores || 0;
     const totalMaestros = this.total_user.maestros || 0;
     const totalAlumnos = this.total_user.alumnos || 0;
@@ -153,34 +225,5 @@ export class GraficasScreenComponent implements OnInit{
         }
       ]
     };
-
-    // Actualizar histograma con totales
-    this.lineChartData = {
-      labels: ["Administradores", "Maestros", "Alumnos"],
-      datasets: [
-        {
-          data: [totalAdmins, totalMaestros, totalAlumnos],
-          label: 'Total de usuarios por rol',
-          backgroundColor: '#F88406'
-        }
-      ]
-    };
-
-    // Actualizar gráfica de barras
-    this.barChartData = {
-      labels: ["Administradores", "Maestros", "Alumnos"],
-      datasets: [
-        {
-          data: [totalAdmins, totalMaestros, totalAlumnos],
-          label: 'Usuarios registrados',
-          backgroundColor: [
-            '#F88406',
-            '#FCFF44',
-            '#82D3FB'
-          ]
-        }
-      ]
-    };
   }
-
 }

@@ -219,8 +219,9 @@ export class EventosAcademicosScreenComponent implements OnInit {
       return;
     }
 
-    // Verificar que solo administradores puedan registrar eventos
-    if (this.rol !== 'Administrador') {
+    // Verificar que solo administradores puedan registrar eventos (acepta mayúsculas/minúsculas)
+    const rolNormalizado = (this.rol || '').toLowerCase();
+    if (rolNormalizado !== 'administrador') {
       alert('Solo los administradores pueden registrar eventos académicos');
       this.router.navigate(['/eventos-lista']);
       return;
@@ -501,7 +502,19 @@ export class EventosAcademicosScreenComponent implements OnInit {
       return;
     }
 
-    const eventoData = this.formularioEvento.value;
+    // Ajustar payload al formato esperado por el backend
+    const raw = this.formularioEvento.value;
+    const fecha = raw.fecha_realizacion ? new Date(raw.fecha_realizacion) : null;
+    const fechaISO = fecha ? fecha.toISOString().slice(0, 10) : '';
+
+    const eventoData = {
+      ...raw,
+      fecha_realizacion: fechaISO,
+      // El backend espera string, no array
+      publico_objetivo: (raw.publico_objetivo || []).join(', '),
+      // Si no se requiere programa educativo, enviar string vacío
+      programa_educativo: this.mostrarProgramaEducativo ? raw.programa_educativo : ''
+    };
 
     this.eventosService.registrarEvento(eventoData).subscribe(
       (response) => {
@@ -510,8 +523,17 @@ export class EventosAcademicosScreenComponent implements OnInit {
         this.router.navigate(['/eventos-lista']);
       },
       (error) => {
-        console.error('Error al registrar evento:', error);
-        alert('Error al registrar el evento');
+        const detalle = error?.error || error?.message || error;
+        const status = error?.status ?? 'sin status';
+        const url = error?.url ?? 'sin url';
+        console.error('Error al registrar evento:', { status, url, detalle, payload: eventoData });
+        let msg = 'Error al registrar el evento';
+        try {
+          msg = typeof detalle === 'string' ? detalle : JSON.stringify(detalle);
+        } catch (_) {
+          msg = 'Error al registrar el evento';
+        }
+        alert([`Status: ${status}`, `URL: ${url}`, msg].join('\n'));
       }
     );
   }
